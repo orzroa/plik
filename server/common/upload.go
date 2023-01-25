@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	randRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	randRunes       = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	simpleRandRunes = []rune("0123456789")
 )
 
 // Upload object
@@ -44,16 +45,20 @@ type Upload struct {
 }
 
 // NewUpload creates a new upload object
-func NewUpload() (upload *Upload) {
+func NewUpload(simpleMode bool) (upload *Upload) {
 	upload = &Upload{}
-	upload.GenerateID()
+	upload.GenerateID(simpleMode)
 	upload.GenerateUploadToken()
 	return upload
 }
 
 // GenerateID generate a new Upload ID and UploadToken
-func (upload *Upload) GenerateID() {
-	upload.ID = GenerateRandomID(16)
+func (upload *Upload) GenerateID(simpleMode bool) {
+	if simpleMode {
+		upload.ID = GenerateRandomIDx(simpleMode, 6)
+	} else {
+		upload.ID = GenerateRandomIDx(simpleMode, 16)
+	}
 }
 
 // GenerateUploadToken generate a new UploadToken
@@ -112,11 +117,23 @@ func (upload *Upload) Sanitize(config *Configuration) {
 // GenerateRandomID generates a random string with specified length.
 // Used to generate upload id, tokens, ...
 func GenerateRandomID(length int) string {
-	max := *big.NewInt(int64(len(randRunes)))
+	return GenerateRandomIDx(false, length)
+}
+
+// GenerateRandomIDx generates a random string with specified length.
+// Used to generate upload id, tokens, ...
+func GenerateRandomIDx(simpleMode bool, length int) string {
+	var runes []rune
+	if simpleMode {
+		runes = simpleRandRunes
+	} else {
+		runes = randRunes
+	}
+	max := *big.NewInt(int64(len(runes)))
 	b := make([]rune, length)
 	for i := range b {
 		n, _ := rand.Int(rand.Reader, &max)
-		b[i] = randRunes[n.Int64()]
+		b[i] = runes[n.Int64()]
 	}
 
 	return string(b)
@@ -143,7 +160,7 @@ func (upload *Upload) IsExpired() bool {
 // InitializeForTests initialize upload for database insert without config checks and override for testing purpose
 func (upload *Upload) InitializeForTests() {
 	if upload.ID == "" {
-		upload.GenerateID()
+		upload.GenerateID(false)
 	}
 
 	upload.ExtendExpirationDate()

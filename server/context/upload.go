@@ -11,7 +11,7 @@ import (
 
 // CreateUpload from params and context (check configuration and default values, generate upload and file IDs, ... )
 func (ctx *Context) CreateUpload(params *common.Upload) (upload *common.Upload, err error) {
-	upload = common.NewUpload()
+	upload = common.NewUpload(ctx.config.SimpleMode)
 
 	if ctx.GetSourceIP() != nil {
 		upload.RemoteIP = ctx.GetSourceIP().String()

@@ -96,6 +96,8 @@ type Configuration struct {
 	uploadWhitelist        []*net.IPNet
 	clean                  bool
 	sessionTimeout         int
+
+	SimpleMode             bool
 }
 
 // NewConfiguration creates a new configuration

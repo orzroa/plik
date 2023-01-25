@@ -22,3 +22,4 @@ plikd_*.cfg
 .idea
 plik.iml
 coverage.out
+package-lock.json
