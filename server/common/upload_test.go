@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewUpload(t *testing.T) {
-	upload := NewUpload()
+	upload := NewUpload(false)
 	require.NotNil(t, upload)
 	require.NotZero(t, upload.ID, "missing upload id")
 	require.NotZero(t, upload.UploadToken, "missing upload token")

@@ -32,6 +32,16 @@ server:
 	@cd server && $(GO_BUILD) -o plikd
 
 ###
+# Build plik server for the arm64 architecture
+###
+arm64:
+	@server/gen_build_info.sh info
+	@echo "Building Plik server"
+	@cd server && CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC=aarch64-linux-gnu-gcc $(GO_BUILD) -o plikd.arm64
+
+
+
+###
 # Build plik client for the current architecture
 ###
 client:
